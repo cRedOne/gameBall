@@ -1,38 +1,53 @@
-.App {
-  text-align: center;
+/* src/App.css */
+
+/* Сбрасываем стандартные отступы и границы */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+/* Стили для body */
+body {
+  font-family: Arial, sans-serif;
+  height: 100%; /* Страница должна занимать всю высоту */
+  background-color: #000;  /* Черный фон для тела */
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+/* Стили для контейнера */
+.container {
+  width: 100vw;  /* Ширина на весь экран */
+  height: 100vh; /* Высота на весь экран */
+  display: flex;  /* Flexbox для центрирования */
+  justify-content: center;  /* Центрирование по горизонтали */
+  align-items: center;  /* Центрирование по вертикали */
+  background: linear-gradient(135deg, #1a1a1a, #4b4b4b);  /* Градиентный фон */
+  background-size: cover;  /* Убираем повторение фона */
+  background-position: center; /* Градиент по центру */
+}
+
+/* Стили для шарика */
+.ball {
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, #b0b0b0, #595959); /* Металлический радиальный градиент */
+  border-radius: 50%;  /* Круглая форма */
+  box-shadow: 0 8px 10px rgba(0, 0, 0, 0.4);  /* Легкая тень для эффекта объема */
+  position: relative;  /* Позиционирование внутри контейнера */
+  transition: 0.3s ease;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+  .ball {
+    width: 80px;
+    height: 80px;
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
+@media (max-width: 480px) {
+  .ball {
+    width: 60px;
+    height: 60px;
   }
 }
