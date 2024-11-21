@@ -1,39 +1,39 @@
-import React, { useState } from 'react';  // Импортируем useState для изменения состояния компонента
+import React, { useState } from 'react';
 
 const Ball = () => {
   // Стейт для изменения цвета шарика при клике
-  const [color, setColor] = useState('#b0b0b0');  // Изначальный цвет шарика
+  const [color, setColor] = useState('#b0b0b0');
+  const [userId, setUserId] = useState(null); // Стейт для ID пользователя
 
   // Обработчик клика по шарикам
   const handleClick = async () => {
     // Меняем цвет на случайный при каждом клике
     const newColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-    setColor(newColor);  // Обновляем цвет
+    setColor(newColor);
 
-    // Выполняем анимацию (например, увеличиваем шарик)
-    const ballElement = document.querySelector('.ball');
-    ballElement.style.transform = 'scale(1.2)';  // Увеличиваем шарик на 50%
-    setTimeout(() => {
-      ballElement.style.transform = 'scale(1)';  // Возвращаем шарик в исходный размер
-    }, 300);  // 300 миллисекунд для плавного эффекта
-
-    // Получаем ID пользователя (например, это может быть динамическое значение, хранимое в state или сессии)
-    const userId = 123456;  // В реальном приложении это может быть получено через контекст или сессии
-
+    // Получаем ID пользователя с сервера (если нужно)
     try {
-      // Отправляем запрос на сервер для обработки
-      const response = await fetch('http://localhost:5000/send-message', {
+      const response = await fetch('http://localhost:5000/get-user-id');  // Здесь предполагаем, что у вас есть этот маршрут
+      const data = await response.json();
+      const id = data.userId;
+      setUserId(id); // Устанавливаем ID в стейт
+
+      // Показываем alert с ID пользователя
+      alert(`Пользователь с ID ${id} кликнул на шарик!`);
+      
+      // Отправляем запрос на сервер для отправки сообщения в Telegram
+      const sendMessageResponse = await fetch('http://localhost:5000/send-message', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          chatId: userId,  // Отправляем ID пользователя (chatId) в теле запроса
-          text: `Пользователь с ID ${userId} кликнул на шарик!`,  // Текст сообщения
+          chatId: id,  // Отправляем ID пользователя в теле запроса
+          text: `Пользователь с ID ${id} кликнул на шарик!`,  // Текст сообщения
         }),
       });
 
-      if (response.ok) {
+      if (sendMessageResponse.ok) {
         console.log('Сообщение отправлено в Telegram');
       } else {
         console.error('Ошибка при отправке сообщения');
@@ -43,7 +43,7 @@ const Ball = () => {
     }
   };
 
-  // Обработчик для начала касания экрана (к примеру, эффект при касании)
+  // Обработчик для начала касания экрана
   const handleTouchStart = () => {
     console.log("Touch started on the ball!");
   };
@@ -61,8 +61,7 @@ const Ball = () => {
       onTouchStart={handleTouchStart}  // Добавляем обработчик начала касания
       onTouchEnd={handleTouchEnd}  // Добавляем обработчик окончания касания
     >
-      {/* Можно добавить текст внутри шарика, например: */}
-     
+      {/* Здесь можно добавить текст или другую информацию */}
     </div>
   );
 }
