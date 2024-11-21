@@ -4,6 +4,8 @@ const Ball = () => {
   // Стейт для изменения цвета шарика при клике
   const [color, setColor] = useState('#b0b0b0');
   const [userId, setUserId] = useState(null); // Стейт для ID пользователя
+  const [animationState, setAnimationState] = useState(false); // Стейт для анимации
+  const [isEnlarged, setIsEnlarged] = useState(false); // Стейт для отслеживания увеличения размера
 
   // Обработчик клика по шарикам
   const handleClick = async () => {
@@ -11,33 +13,25 @@ const Ball = () => {
     const newColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
     setColor(newColor);
 
-    // Получаем ID пользователя с сервера (если нужно)
+    // Получаем ID пользователя с сервера
     try {
-      const response = await fetch('http://localhost:5000/get-user-id');  // Здесь предполагаем, что у вас есть этот маршрут
+      const response = await fetch('http://localhost:5000/get-user-id');  // Запрос к серверу, где получаем ID пользователя
       const data = await response.json();
       const id = data.userId;
-      setUserId(id); // Устанавливаем ID в стейт
+      setUserId(id); // Устанавливаем ID в состояние
 
-      // Показываем alert с ID пользователя
+      // Показываем ID в виде alert (или можно сделать что-то другое)
       alert(`Пользователь с ID ${id} кликнул на шарик!`);
-      
-      // Отправляем запрос на сервер для отправки сообщения в Telegram
-      const sendMessageResponse = await fetch('http://localhost:5000/send-message', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          chatId: id,  // Отправляем ID пользователя в теле запроса
-          text: `Пользователь с ID ${id} кликнул на шарик!`,  // Текст сообщения
-        }),
-      });
 
-      if (sendMessageResponse.ok) {
-        console.log('Сообщение отправлено в Telegram');
-      } else {
-        console.error('Ошибка при отправке сообщения');
-      }
+      // Включаем анимацию для шарика
+      setAnimationState(true);
+      setIsEnlarged(true);  // Включаем увеличение шарика
+
+      // Ожидаем 1 секунду и выключаем анимацию
+      setTimeout(() => {
+        setAnimationState(false);
+        setIsEnlarged(false); // Восстанавливаем нормальный размер после 1 секунды
+      }, 1000);
     } catch (error) {
       console.error('Ошибка с сервером:', error);
     }
@@ -45,23 +39,34 @@ const Ball = () => {
 
   // Обработчик для начала касания экрана
   const handleTouchStart = () => {
-    console.log("Touch started on the ball!");
+    console.log('Touch started on the ball!');
   };
 
   // Обработчик для окончания касания экрана
   const handleTouchEnd = () => {
-    console.log("Touch ended on the ball!");
+    console.log('Touch ended on the ball!');
   };
 
   return (
     <div
-      className="ball"
-      style={{ background: color }}  // Цвет будет изменяться через инлайн-стили
-      onClick={handleClick}  // Добавляем обработчик клика
-      onTouchStart={handleTouchStart}  // Добавляем обработчик начала касания
-      onTouchEnd={handleTouchEnd}  // Добавляем обработчик окончания касания
+      className={`ball ${animationState ? 'animated' : ''}`}  // Добавляем анимацию при клике
+      style={{
+        background: color,         // Цвет будет изменяться через инлайн-стили
+        borderRadius: '50%',       // Шарик будет круглый
+        width: isEnlarged ? '150px' : '100px', // Увеличиваем размер на 50% при клике
+        height: isEnlarged ? '150px' : '100px', // Увеличиваем размер на 50% при клике
+        display: 'flex',           // Используем flexbox для центрирования
+        justifyContent: 'center',  // Центрируем содержимое по горизонтали
+        alignItems: 'center',      // Центрируем содержимое по вертикали
+        cursor: 'pointer',         // Указатель мыши как указатель для кликабельного элемента
+        transition: 'all 0.3s ease', // Плавное изменение для анимации
+      }}
+      onClick={handleClick}           // Добавляем обработчик клика
+      onTouchStart={handleTouchStart} // Добавляем обработчик начала касания
+      onTouchEnd={handleTouchEnd}     // Добавляем обработчик окончания касания
     >
-      {/* Здесь можно добавить текст или другую информацию */}
+      {/* Можно добавить ID пользователя в интерфейс, чтобы он отображался */}
+      {userId && <p style={{ color: '#fff', fontSize: '14px' }}>Твой ID: {userId}</p>}
     </div>
   );
 }
