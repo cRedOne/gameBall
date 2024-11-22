@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/gameBall/static/css/main.86331fea.css",
-    "main.js": "/gameBall/static/js/main.aa0367ff.js",
+    "main.js": "/gameBall/static/js/main.f03b2461.js",
     "static/js/453.4f6d9602.chunk.js": "/gameBall/static/js/453.4f6d9602.chunk.js",
     "index.html": "/gameBall/index.html",
     "main.86331fea.css.map": "/gameBall/static/css/main.86331fea.css.map",
-    "main.aa0367ff.js.map": "/gameBall/static/js/main.aa0367ff.js.map",
+    "main.f03b2461.js.map": "/gameBall/static/js/main.f03b2461.js.map",
     "453.4f6d9602.chunk.js.map": "/gameBall/static/js/453.4f6d9602.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.86331fea.css",
-    "static/js/main.aa0367ff.js"
+    "static/js/main.f03b2461.js"
   ]
 }
