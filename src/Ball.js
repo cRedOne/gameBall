@@ -1,74 +1,117 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
+// Компонент для отображения шарика
 const Ball = () => {
-  // Стейт для изменения цвета шарика при клике
-  const [color, setColor] = useState('#b0b0b0');
-  const [userId, setUserId] = useState(null); // Стейт для ID пользователя
-  const [animationState, setAnimationState] = useState(false); // Стейт для анимации
-  const [isEnlarged, setIsEnlarged] = useState(false); // Стейт для отслеживания увеличения размера
+  const [color, setColor] = useState('radial-gradient(circle, #b0b0b0, #595959)');  // Начальный градиентный цвет
+  const [isEnlarged, setIsEnlarged] = useState(false);
+  const [animationState, setAnimationState] = useState(false);
 
-  // Обработчик клика по шарикам
-  const handleClick = async () => {
-    // Меняем цвет на случайный при каждом клике
-    const newColor = `#${Math.floor(Math.random() * 16777215).toString(16)}`;
-    setColor(newColor);
+  const [position, setPosition] = useState({ x: 50, y: 50 }); // Начальная позиция в процентах
+  const [delta, setDelta] = useState({ x: 0, y: 0 }); // Для отображения смещения
+  const [isMoving, setIsMoving] = useState(false);  // Состояние движения
 
-    // Получаем ID пользователя с сервера
-    try {
-      const response = await fetch('http://localhost:5000/get-user-id');  // Запрос к серверу, где получаем ID пользователя
-      const data = await response.json();
-      const id = data.userId;
-      setUserId(id); // Устанавливаем ID в состояние
+  // Коэффициент для увеличения движения
+  const moveCoefficient = 1; 
 
-      // Показываем ID в виде alert (или можно сделать что-то другое)
-      alert(`Пользователь с ID ${id} кликнул на шарик!`);
+  const ballStyle = {
+    borderRadius: '50%',
+    width: isEnlarged ? '120px' : '100px',
+    height: isEnlarged ? '120px' : '100px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    transition: 'width 0.3s ease, height 0.3s ease',
+    background: color,
+    position: 'absolute',
+    left: `${position.x}%`,
+    top: `${position.y}%`,
+    transform: 'translate(-50%, -50%)',
+  };
 
-      // Включаем анимацию для шарика
-      setAnimationState(true);
-      setIsEnlarged(true);  // Включаем увеличение шарика
+  const offsetStyle = {
+    position: 'fixed',
+    top: '10px',
+    left: '10px',
+    color: 'white',
+    fontSize: '16px',
+    zIndex: 1000, // Для вывода данных поверх других элементов
+  };
 
-      // Ожидаем 1 секунду и выключаем анимацию
-      setTimeout(() => {
-        setAnimationState(false);
-        setIsEnlarged(false); // Восстанавливаем нормальный размер после 1 секунды
-      }, 1000);
-    } catch (error) {
-      console.error('Ошибка с сервером:', error);
+  // Функция старта акселерометра
+  const startAccelerometer = () => {
+    if (window.DeviceMotionEvent) {
+      window.addEventListener('devicemotion', handleDeviceMotion);
     }
   };
 
-  // Обработчик для начала касания экрана
-  const handleTouchStart = () => {
-    console.log('Touch started on the ball!');
+  // Функция остановки акселерометра
+  const stopAccelerometer = () => {
+    if (window.DeviceMotionEvent) {
+      window.removeEventListener('devicemotion', handleDeviceMotion);
+    }
   };
 
-  // Обработчик для окончания касания экрана
-  const handleTouchEnd = () => {
-    console.log('Touch ended on the ball!');
+  // Обработчик акселерометра
+  const handleDeviceMotion = (event) => {
+    const { x, y } = event.accelerationIncludingGravity;
+    const roundedX = Math.round(x * 100) / 100;
+    const roundedY = Math.round(y * 100) / 100;
+
+    if (isMoving) {
+      setPosition(prevPosition => ({
+        x: Math.max(0, Math.min(100, prevPosition.x + roundedX * moveCoefficient)),
+        y: Math.max(0, Math.min(100, prevPosition.y + roundedY * moveCoefficient)),
+      }));
+
+      setDelta(prevDelta => ({
+        x: prevDelta.x + roundedX * moveCoefficient,
+        y: prevDelta.y + roundedY * moveCoefficient,
+      }));
+    }
+  };
+
+  // Эффект для отслеживания акселерометра
+  useEffect(() => {
+    if (isMoving) {
+      startAccelerometer();
+    } else {
+      stopAccelerometer();
+    }
+
+    return () => stopAccelerometer();
+  }, [isMoving]);
+
+  // Функция обработки клика
+  const handleClick = () => {
+    if (isMoving) {
+      setIsMoving(false);
+      setColor('radial-gradient(circle, #b0b0b0, #595959)');  // Восстанавливаем начальный цвет
+      setAnimationState(false);
+    } else {
+      setIsMoving(true);
+      setColor('red');  // Делаем шарик красным
+      setAnimationState(true);
+    }
   };
 
   return (
-    <div
-      className={`ball ${animationState ? 'animated' : ''}`}  // Добавляем анимацию при клике
-      style={{
-        background: color,         // Цвет будет изменяться через инлайн-стили
-        borderRadius: '50%',       // Шарик будет круглый
-        width: isEnlarged ? '150px' : '100px', // Увеличиваем размер на 50% при клике
-        height: isEnlarged ? '150px' : '100px', // Увеличиваем размер на 50% при клике
-        display: 'flex',           // Используем flexbox для центрирования
-        justifyContent: 'center',  // Центрируем содержимое по горизонтали
-        alignItems: 'center',      // Центрируем содержимое по вертикали
-        cursor: 'pointer',         // Указатель мыши как указатель для кликабельного элемента
-        transition: 'all 0.3s ease', // Плавное изменение для анимации
-      }}
-      onClick={handleClick}           // Добавляем обработчик клика
-      onTouchStart={handleTouchStart} // Добавляем обработчик начала касания
-      onTouchEnd={handleTouchEnd}     // Добавляем обработчик окончания касания
-    >
-      {/* Можно добавить ID пользователя в интерфейс, чтобы он отображался */}
-      {userId && <p style={{ color: '#fff', fontSize: '14px' }}>Твой ID: {userId}</p>}
+    <div>
+      <div
+        className={`ball ${animationState ? 'animated' : ''}`}
+        style={ballStyle}
+        onClick={handleClick}
+      >
+        {/* Шарик */}
+      </div>
+
+      {/* Вывод данных смещения */}
+      <div style={offsetStyle}>
+        <h3>Смещение шарика:</h3>
+        <p>Дельта X: {delta.x.toFixed(2)}%</p>
+        <p>Дельта Y: {delta.y.toFixed(2)}%</p>
+      </div>
     </div>
   );
-}
+};
 
 export default Ball;

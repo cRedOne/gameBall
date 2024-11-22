@@ -21,7 +21,7 @@ body {
   display: flex;  /* Flexbox для центрирования */
   justify-content: center;  /* Центрирование по горизонтали */
   align-items: center;  /* Центрирование по вертикали */
-  background: linear-gradient(135deg, #1a1a1a, #4b4b4b);  /* Градиентный фон */
+  background: linear-gradient(135deg, #040435, #071d47);  /* Градиентный фон от темно-синего к синему */
   background-size: cover;  /* Убираем повторение фона */
   background-position: center; /* Градиент по центру */
 }
@@ -35,6 +35,30 @@ body {
   box-shadow: 0 8px 10px rgba(0, 0, 0, 0.4);  /* Легкая тень для эффекта объема */
   position: relative;  /* Позиционирование внутри контейнера */
   transition: 0.3s ease;
+  background: radial-gradient(circle,  #da3737),#353535,; /* Круговой градиент от серого к темно-серому */
+}
+.ball:focus {
+  outline: none;
+  border: none; /* Убираем рамку */
+}
+
+/* Header.css */
+.header {
+  display: flex;
+  justify-content: space-between; /* Распределяем элементы по сторонам */
+  align-items: center; /* Центрируем по вертикали */
+  background-color: rgba(0, 0, 0, 0.5); /* Полупрозрачный фон */
+  color: white; /* Белый цвет текста */
+  padding: 10px 20px;
+  position: fixed; /* Закрепляем шапку вверху */
+  top: 0;
+  left: 0;
+  width: 100%; /* Ширина на весь экран */
+  z-index: 1000; /* Обеспечиваем, чтобы шапка была поверх других элементов */
+}
+.username, .score {
+  font-size: 16px; /* Размер шрифта */
+  font-weight: bold; /* Жирное начертание текста */
 }
 
 /* Адаптивность для мобильных устройств */
