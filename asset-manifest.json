@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/gameBall/static/css/main.925d83b0.css",
+    "main.js": "/gameBall/static/js/main.683129c3.js",
+    "static/js/453.4f6d9602.chunk.js": "/gameBall/static/js/453.4f6d9602.chunk.js",
+    "index.html": "/gameBall/index.html",
+    "main.925d83b0.css.map": "/gameBall/static/css/main.925d83b0.css.map",
+    "main.683129c3.js.map": "/gameBall/static/js/main.683129c3.js.map",
+    "453.4f6d9602.chunk.js.map": "/gameBall/static/js/453.4f6d9602.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.925d83b0.css",
+    "static/js/main.683129c3.js"
+  ]
+}
